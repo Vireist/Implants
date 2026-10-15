@@ -1,6 +1,27 @@
 {
   "implants": [
-    "implants/eye_god_serial_i.md",
-    "implants/chipware_socket.md"
+    "implants/eye_god_i.md",
+    "implants/reflex_accelerator.md",
+    "implants/emotional_damper.md",
+    "implants/neuro_link.md",
+    "implants/memory_module.md",
+    "implants/synth_heart.md",
+    "implants/filter_lungs.md",
+    "implants/adrenal_injector.md",
+    "implants/ghost_arm.md",
+    "implants/arm_reinforced.md",
+    "implants/arm_blade.md",
+    "implants/leg_runner.md",
+    "implants/leg_anchor.md",
+    "implants/torso_plates.md",
+    "implants/torso_skeleton.md",
+    "implants/skin_sensors.md",
+    "implants/id_chip.md",
+    "implants/cosmetic_glow.md",
+    "implants/spine_exo.md",
+    "implants/ears_audio.md",
+    "implants/throat_voice.md",
+    "implants/teeth_tungsten.md",
+    "implants/power_isotope_dirty.md"
   ]
 }

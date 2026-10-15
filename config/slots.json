@@ -38,28 +38,42 @@
     "id": "arm_left",
     "name": "Левая рука",
     "group": "arms",
-    "capacity": 1,
+    "capacity": 2,
     "svg": "zone-arm_left"
   },
   {
     "id": "arm_right",
     "name": "Правая рука",
     "group": "arms",
-    "capacity": 1,
+    "capacity": 2,
     "svg": "zone-arm_right"
   },
   {
     "id": "leg_left",
     "name": "Левая нога",
     "group": "legs",
-    "capacity": 1,
+    "capacity": 2,
     "svg": "zone-leg_left"
   },
   {
     "id": "leg_right",
     "name": "Правая нога",
     "group": "legs",
-    "capacity": 1,
+    "capacity": 2,
     "svg": "zone-leg_right"
+  },
+  {
+    "id": "ears",
+    "name": "Уши",
+    "group": "head",
+    "capacity": 1,
+    "svg": "zone-ears"
+  },
+  {
+    "id": "throat",
+    "name": "Горло и челюсть",
+    "group": "head",
+    "capacity": 2,
+    "svg": "zone-throat"
   }
 ]

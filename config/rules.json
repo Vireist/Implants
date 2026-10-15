@@ -84,6 +84,28 @@
       },
       "effect": { "addLoad": 2 },
       "message": ""
+    },
+    {
+      "id": "forbidden_implant_warning",
+      "enabled": true,
+      "type": "validation",
+      "severity": "warning",
+      "when": { "installedAny": { "tags": ["forbidden"] } },
+      "message": "Изделие вне лицензий Урал-Кинетики: риск конфискации и дела на любом блокпосту."
+    },
+    {
+      "id": "id_chip_info",
+      "enabled": true,
+      "type": "info",
+      "when": { "installed": "id_chip" },
+      "message": "Геолокатор ID-чипа передаёт маршрут полиции. Без чипа нет работы, жилья и карточек."
+    },
+    {
+      "id": "karyas_kuvada_synergy",
+      "enabled": true,
+      "type": "info",
+      "when": { "installedAll": { "ids": ["spine_exo", "arm_reinforced"] } },
+      "message": "Синергия «Каркас» + «Кувалда»: +1 куб к проверкам Силы на подъём и удержание."
     }
   ]
 }
