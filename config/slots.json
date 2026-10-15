@@ -1,0 +1,65 @@
+[
+  {
+    "id": "cranial",
+    "name": "Череп",
+    "group": "head",
+    "capacity": 2,
+    "svg": "zone-cranial"
+  },
+  {
+    "id": "eye_left",
+    "name": "Левый глаз",
+    "group": "head",
+    "capacity": 1,
+    "svg": "zone-eye_left"
+  },
+  {
+    "id": "eye_right",
+    "name": "Правый глаз",
+    "group": "head",
+    "capacity": 1,
+    "svg": "zone-eye_right"
+  },
+  {
+    "id": "torso_core",
+    "name": "Торс",
+    "group": "torso",
+    "capacity": 3,
+    "svg": "zone-torso_core"
+  },
+  {
+    "id": "spine",
+    "name": "Позвоночник",
+    "group": "nervous",
+    "capacity": 1,
+    "svg": "zone-spine"
+  },
+  {
+    "id": "arm_left",
+    "name": "Левая рука",
+    "group": "arms",
+    "capacity": 1,
+    "svg": "zone-arm_left"
+  },
+  {
+    "id": "arm_right",
+    "name": "Правая рука",
+    "group": "arms",
+    "capacity": 1,
+    "svg": "zone-arm_right"
+  },
+  {
+    "id": "leg_left",
+    "name": "Левая нога",
+    "group": "legs",
+    "capacity": 1,
+    "svg": "zone-leg_left"
+  },
+  {
+    "id": "leg_right",
+    "name": "Правая нога",
+    "group": "legs",
+    "capacity": 1,
+    "svg": "zone-leg_right"
+  }
+]

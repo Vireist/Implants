@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Изотопный Ярус — Конструктор имплантов</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+            href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header>
+    <div>
+        <h1>Изотопный Ярус</h1>
+        <p>Конструктор имплантов</p>
+    </div>
+    <nav>
+        <a href="catalog.html">Каталог имплантов</a>
+    </nav>
+</header>
+
+<!-- ШЛЮЗ: вход только через файл персонажа -->
+<div id="char-gate" class="gate">
+    <div class="panel gate-panel">
+        <h2>Идентификация</h2>
+
+        <p class="meta">
+            Конструктор заблокирован. Загрузите файл персонажа,
+            чтобы открыть доступ к схеме тела и имплантам.
+        </p>
+        <p class="meta">
+            Форматы: <code>.md</code> (YAML frontmatter) или <code>.json</code>.
+            Пример: <code>characters/sample.md</code>
+        </p>
+
+        <div id="gate-dropzone" class="dropzone">
+            <div class="dropzone-icon">⤓</div>
+            <p class="dropzone-title">Перетащи файл персонажа сюда</p>
+            <p class="meta">.md или .json — либо выбери через проводник ниже</p>
+        </div>
+
+        <label for="gate-file">Файл персонажа</label>
+        <input id="gate-file" type="file" accept=".json,.md" />
+
+        <div id="gate-error" class="warning-item error" hidden></div>
+
+        <div class="actions">
+            <button id="gate-cancel" class="action" hidden>Отмена</button>
+        </div>
+    </div>
+</div>
+
+<!-- Основной функционал, скрыт до загрузки файла -->
+<main class="layout" id="main-content" hidden>
+    <section class="left">
+        <!-- Характеристики только для чтения -->
+        <div class="panel" id="character-panel"></div>
+
+        <div class="panel">
+            <h2>Схема тела</h2>
+
+            <svg
+                    id="body-svg"
+                    viewBox="0 0 360 760"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-label="Схема тела"
+            >
+                <defs>
+                    <linearGradient id="bodyGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stop-color="#2a1a1a" />
+                        <stop offset="1" stop-color="#180e0e" />
+                    </linearGradient>
+
+                    <linearGradient id="zoneGradient" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="rgba(232, 121, 107, 0.16)" />
+                        <stop offset="1" stop-color="rgba(143, 216, 210, 0.10)" />
+                    </linearGradient>
+
+                    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+                        <feDropShadow
+                                dx="0"
+                                dy="0"
+                                stdDeviation="6"
+                                flood-color="#e8796b"
+                                flood-opacity="0.28"
+                        />
+                    </filter>
+                </defs>
+
+                <rect x="10" y="10" width="340" height="740" rx="30" class="svg-frame"></rect>
+
+                <g class="decor-grid" aria-hidden="true">
+                    <path d="M40 90 H320" />
+                    <path d="M40 210 H320" />
+                    <path d="M40 370 H320" />
+                    <path d="M40 530 H320" />
+                    <path d="M40 690 H320" />
+                </g>
+
+                <g class="body-base" filter="url(#softGlow)" aria-hidden="true">
+                    <ellipse cx="180" cy="88" rx="51" ry="59"
+                             fill="url(#bodyGradient)" stroke="rgba(232, 121, 107, 0.22)" stroke-width="2" />
+                    <path d="M162 139 h36 v27 h-36 z"
+                          fill="url(#bodyGradient)" stroke="rgba(232, 121, 107, 0.16)" stroke-width="2" />
+                    <path d="M109 172 C138 145 222 145 251 172 C267 199 263 260 249 305
+                     C238 343 212 365 180 365 C148 365 122 343 111 305 C97 260 93 199 109 172 Z"
+                          fill="url(#bodyGradient)" stroke="rgba(232, 121, 107, 0.22)" stroke-width="2" />
+                    <path d="M129 363 h102 c13 27 8 50 -8 64 h-86 c-16 -14 -21 -37 -8 -64 z"
+                          fill="url(#bodyGradient)" stroke="rgba(232, 121, 107, 0.14)" stroke-width="2" />
+                    <path d="M94 178 C71 190 62 229 67 270 C71 306 82 341 97 357
+                     C108 367 124 360 122 344 C112 312 105 272 108 231 C110 203 109 187 94 178 Z"
+                          fill="url(#bodyGradient)" stroke="rgba(232, 121, 107, 0.18)" stroke-width="2" />
+                    <path d="M266 178 C289 190 298 229 293 270 C289 306 278 341 263 357
+                     C252 367 236 360 238 344 C248 312 255 272 252 231 C250 203 251 187 266 178 Z"
+                          fill="url(#bodyGradient)" stroke="rgba(232, 121, 107, 0.18)" stroke-width="2" />
+                    <path d="M137 430 C127 489 126 572 135 656 C138 688 146 716 159 724
+                     C171 731 182 719 180 698 C173 639 170 553 172 482 C173 455 167 439 137 430 Z"
+                          fill="url(#bodyGradient)" stroke="rgba(232, 121, 107, 0.14)" stroke-width="2" />
+                    <path d="M223 430 C233 489 234 572 225 656 C222 688 214 716 201 724
+                     C189 731 178 719 180 698 C187 639 190 553 188 482 C187 455 193 439 223 430 Z"
+                          fill="url(#bodyGradient)" stroke="rgba(232, 121, 107, 0.14)" stroke-width="2" />
+                </g>
+
+                <g class="decor-circuits" aria-hidden="true">
+                    <path d="M180 172 V358" />
+                    <path d="M133 212 H227" />
+                    <path d="M142 288 H218" />
+                    <path d="M153 455 V670" />
+                    <path d="M207 455 V670" />
+                </g>
+
+                <g class="slot-layer">
+                    <ellipse id="zone-cranial" class="slot-zone" cx="180" cy="88" rx="47" ry="55">
+                        <title>Череп</title>
+                    </ellipse>
+                    <circle id="zone-eye_left" class="slot-zone" cx="162" cy="84" r="9">
+                        <title>Левый глаз</title>
+                    </circle>
+                    <circle id="zone-eye_right" class="slot-zone" cx="198" cy="84" r="9">
+                        <title>Правый глаз</title>
+                    </circle>
+                    <path id="zone-torso_core" class="slot-zone"
+                          d="M116 178 C142 154 218 154 244 178 C257 202 254 258 242 300
+                 C232 334 209 353 180 353 C151 353 128 334 118 300 C106 258 103 202 116 178 Z">
+                        <title>Торс</title>
+                    </path>
+                    <rect id="zone-spine" class="slot-zone" x="171" y="178" width="18" height="179" rx="9">
+                        <title>Позвоночник</title>
+                    </rect>
+                    <path id="zone-arm_left" class="slot-zone"
+                          d="M97 186 C80 196 73 230 77 266 C81 299 90 329 102 344
+                 C108 351 118 347 116 335 C107 306 102 271 104 234 C106 209 106 193 97 186 Z">
+                        <title>Левая рука</title>
+                    </path>
+                    <path id="zone-arm_right" class="slot-zone"
+                          d="M263 186 C280 196 287 230 283 266 C279 299 270 329 258 344
+                 C252 351 242 347 244 335 C253 306 258 271 256 234 C254 209 254 193 263 186 Z">
+                        <title>Правая рука</title>
+                    </path>
+                    <path id="zone-leg_left" class="slot-zone"
+                          d="M142 437 C134 492 133 568 141 647 C144 676 151 700 160 707
+                 C167 712 174 704 173 688 C167 633 164 555 166 488 C167 462 161 446 142 437 Z">
+                        <title>Левая нога</title>
+                    </path>
+                    <path id="zone-leg_right" class="slot-zone"
+                          d="M218 437 C226 492 227 568 219 647 C216 676 209 700 200 707
+                 C193 712 186 704 187 688 C193 633 196 555 194 488 C193 462 199 446 218 437 Z">
+                        <title>Правая нога</title>
+                    </path>
+                </g>
+            </svg>
+
+            <div id="slot-buttons" class="slot-buttons"></div>
+        </div>
+    </section>
+
+    <section class="right">
+        <div id="totals-panel" class="panel"></div>
+        <div id="slot-panel" class="panel"></div>
+        <div id="warnings-panel" class="panel"></div>
+
+        <div class="panel">
+            <h2>Импорт / Экспорт</h2>
+
+            <div class="actions">
+                <button id="export-file" class="action">Скачать сборку .json</button>
+                <button id="export-code" class="action">Сгенерировать текстовый код</button>
+            </div>
+
+            <label for="import-code">Код сборки</label>
+            <textarea id="import-code" rows="5" placeholder="ISO1...."></textarea>
+
+            <div class="actions">
+                <button id="import-code-button" class="action">Импортировать код</button>
+                <input id="import-file" type="file" accept=".json,.md" />
+            </div>
+
+            <p class="hint">
+                Импорт принимает файлы сборок `.json` / `.md` и коды `ISO1...`.
+                Если в файле есть блок `character`, характеристики персонажа обновятся из него.
+            </p>
+        </div>
+    </section>
+</main>
+
+<div class="hud-decor" aria-hidden="true">
+    <div class="hud-binary">01001001 01001010
+        01010011 01001111
+        01010100 01001111
+        01010000 01000101
+        01001101 01001101
+        01001011 01000010
+        01010011 01000011
+        01000001 01001110</div>
+
+    <div class="hud-vertical">BREACH PROTOCOL 104.008</div>
+
+    <div class="hud-barcode"></div>
+    <div class="hud-terminal">ROOT@IZOTOP-YARUS:~#</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

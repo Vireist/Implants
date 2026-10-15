@@ -1,0 +1,89 @@
+{
+  "rules": [
+    {
+      "id": "neural_overload_block",
+      "enabled": true,
+      "type": "validation",
+      "severity": "block",
+      "when": {
+        "calc": { "overload": { "gt": 0 } }
+      },
+      "message": "Перегрузка: мозг не способен одновременно управлять всеми установленными имплантами."
+    },
+    {
+      "id": "budget_exceeded_block",
+      "enabled": true,
+      "type": "validation",
+      "severity": "block",
+      "when": {
+        "all": [
+          { "calc": { "budget": { "gt": 0 } } },
+          { "calc": { "budgetLeft": { "lt": 0 } } }
+        ]
+      },
+      "message": "Недостаточно бюджета: суммарная стоимость имплантов превышает доступные средства."
+    },
+    {
+      "id": "budget_low_warning",
+      "enabled": true,
+      "type": "validation",
+      "severity": "warning",
+      "when": {
+        "all": [
+          { "calc": { "budget": { "gt": 0 } } },
+          { "calc": { "budgetLeft": { "gte": 0, "lt": 1000 } } }
+        ]
+      },
+      "message": "Бюджет на исходе: после покупки осталось меньше 1000 ¢."
+    },
+    {
+      "id": "dirty_isotope_warning",
+      "enabled": true,
+      "type": "validation",
+      "severity": "warning",
+      "when": {
+        "installedAny": { "energyRisk": "high" }
+      },
+      "message": "Грязная изотопная батарея повышает риск облучения. Нужны антирады или защитный модуль."
+    },
+    {
+      "id": "corporate_subscription_warning",
+      "enabled": true,
+      "type": "validation",
+      "severity": "warning",
+      "when": {
+        "installedAny": { "quality": "corporate", "subscription": true }
+      },
+      "message": "Корпоративный имплант требует активную подписку. При неуплате возможны ограничения."
+    },
+    {
+      "id": "eye_god_info",
+      "enabled": true,
+      "type": "info",
+      "when": {
+        "installedAny": { "tags": ["eye_god"] }
+      },
+      "message": "Око Бога уязвимо к сильному удару в голову и цифровому взлому."
+    },
+    {
+      "id": "bioelectric_fatigue",
+      "enabled": true,
+      "type": "validation",
+      "severity": "warning",
+      "when": {
+        "installedAny": { "energyRisk": "bioelectric" }
+      },
+      "message": "Биоимплант питается от носителя: требуется повышенный рацион (+20%) и 8 часов сна. Без этого штрафы к Реакции и Восприятию."
+    },
+    {
+      "id": "bioelectric_stress_modifier",
+      "enabled": true,
+      "type": "modifier",
+      "when": {
+        "count": { "tags": ["bioelectric"], "gte": 2 }
+      },
+      "effect": { "addLoad": 2 },
+      "message": ""
+    }
+  ]
+}
