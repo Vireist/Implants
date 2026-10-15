@@ -385,6 +385,16 @@ function renderSlotPanel(totals) {
                 const occupied = getOccupiedSlots(entry);
                 const isPrimary = entry.slot === selectedSlot;
 
+                const chips = [
+                    ...occupied.map((id) => `<span class="chip">${escapeHtml(data.slotsById[id]?.name || id)}</span>`),
+                    implant ? `<span class="chip chip-dim">нагрузка ${num(implant.neuralLoad)}</span>` : "",
+                    entry.locked ? `<span class="chip badge-locked">🔒 базовый</span>` : ""
+                ].filter(Boolean).join("");
+
+                const removeButton = entry.locked
+                    ? `<span class="meta lock-note">🔒 база</span>`
+                    : `<button class="action action-danger" data-remove="${index}">Удалить</button>`;
+
                 return `
           <div class="installed-item">
             <div class="installed-head">
@@ -392,14 +402,9 @@ function renderSlotPanel(totals) {
                 <span class="name">${escapeHtml(implant?.name || entry.implant)}</span>
                 ${!isPrimary ? `<span class="chip chip-dim">занимает слот дополнительно</span>` : ""}
               </div>
-              <button class="action action-danger" data-remove="${index}">Удалить</button>
+              ${removeButton}
             </div>
-            <div class="card-tags">
-              ${occupied
-                    .map((id) => `<span class="chip">${escapeHtml(data.slotsById[id]?.name || id)}</span>`)
-                    .join("")}
-              ${implant ? `<span class="chip chip-dim">нагрузка ${num(implant.neuralLoad)}</span>` : ""}
-            </div>
+            <div class="card-tags">${chips}</div>
           </div>
         `;
             })
@@ -420,6 +425,7 @@ function renderSlotPanel(totals) {
                 const bonus = num(implant.capacityBonus);
                 const budgetLimited = totals.budget > 0;
                 const leftAfter = totals.budgetLeft - num(implant.cost);
+                const reqLines = describeRequirements(implant);
 
                 return `
           <div class="implant-option ${check.ok ? "" : "disabled"}">
@@ -442,6 +448,17 @@ function renderSlotPanel(totals) {
             </div>
 
             ${
+                    reqLines.length
+                        ? `
+              <div class="requirements-block">
+                <div class="requirements-title">Требования</div>
+                ${reqLines.map((line) => `<div class="requirements-line">${escapeHtml(line)}</div>`).join("")}
+              </div>
+            `
+                        : ""
+                }
+
+            ${
                     !check.ok
                         ? `
               <div class="block-reason">
@@ -451,17 +468,28 @@ function renderSlotPanel(totals) {
                         : ""
                 }
 
+            ${
+                    implant.description
+                        ? `
+              <details class="implant-desc">
+                <summary>Описание</summary>
+                <div class="description">${mdToHtml(implant.description)}</div>
+              </details>
+            `
+                        : ""
+                }
+
             <div class="option-footer">
               <div class="card-tags">
                 ${(implant.tags || [])
-                                .slice(0, 4)
-                                .map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`)
-                                .join("")}
+                    .slice(0, 4)
+                    .map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`)
+                    .join("")}
                 ${
-                                budgetLimited
-                                    ? `<span class="chip ${leftAfter < 0 ? "chip-danger" : "chip-dim"}">остаток после: ${leftAfter} ¢</span>`
-                                    : ""
-                            }
+                    budgetLimited
+                        ? `<span class="chip ${leftAfter < 0 ? "chip-danger" : "chip-dim"}">остаток после: ${leftAfter} ¢</span>`
+                        : ""
+                }
               </div>
               <button
                 class="action"
@@ -486,6 +514,7 @@ function renderSlotPanel(totals) {
         button.addEventListener("click", () => removeInstalled(Number(button.dataset.remove)));
     });
 }
+
 
 function renderTotalsPanel(totals) {
     const panel = byId("totals-panel");
@@ -580,6 +609,7 @@ function installImplant(slotId, implantId) {
 }
 
 function removeInstalled(index) {
+    if (state.installed[index]?.locked) return;
     state.installed.splice(index, 1);
     renderAll();
 }
@@ -652,28 +682,30 @@ function canInstall(slotId, implantId, entries) {
 
     if (implant.requires) {
         if (implant.requires.ids?.length) {
-            const hasRequiredIds = implant.requires.ids.every((id) =>
-                entries.some((entry) => entry.implant === id)
+            const missing = implant.requires.ids.filter(
+                (id) => !entries.some((entry) => entry.implant === id)
             );
-            if (!hasRequiredIds) {
-                reasons.push("Не установлены требуемые импланты.");
+            if (missing.length) {
+                reasons.push(
+                    `Требуются импланты: ${missing.map((id) => data.implants[id]?.name || id).join(", ")}.`
+                );
             }
         }
 
         if (implant.requires.tags?.length) {
             const installedTags = new Set(installedImplants.flatMap((item) => item.tags || []));
-            const hasRequiredTags = implant.requires.tags.every((tag) => installedTags.has(tag));
-            if (!hasRequiredTags) {
-                reasons.push("Не установлены импланты с требуемыми тегами.");
+            const missingTags = implant.requires.tags.filter((tag) => !installedTags.has(tag));
+            if (missingTags.length) {
+                reasons.push(`Нужны установленные импланты с тегами: ${missingTags.join(", ")}.`);
             }
         }
 
         if (implant.requires.freeSlots?.length) {
-            const hasFreeRequiredSlots = implant.requires.freeSlots.every(
-                (freeSlotId) => !(usage[freeSlotId] > 0)
-            );
-            if (!hasFreeRequiredSlots) {
-                reasons.push("Требуется свободный слот.");
+            const busy = implant.requires.freeSlots.filter((freeSlotId) => usage[freeSlotId] > 0);
+            if (busy.length) {
+                reasons.push(
+                    `Нужны свободные слоты: ${busy.map((s) => data.slotsById[s]?.name || s).join(", ")}.`
+                );
             }
         }
 
@@ -681,7 +713,7 @@ function canInstall(slotId, implantId, entries) {
             Object.entries(implant.requires.attributes).forEach(([attribute, condition]) => {
                 const value = Number(state.character[attribute] || 0);
                 if (!compare(value, condition)) {
-                    reasons.push(`Требуется ${attribute}: ${JSON.stringify(condition)}.`);
+                    reasons.push(`Требуется ${describeCondition(attribute, condition, value)}.`);
                 }
             });
         }
@@ -978,15 +1010,8 @@ function renderCatalogCard(implant) {
     const risk = implant.energy?.risk || "";
     const riskClass = risk === "high" ? "risk-high" : risk === "medium" ? "risk-medium" : risk ? "risk-low" : "";
 
-    const requiresText = implant.requires
-        ? [
-            ...(implant.requires.ids || []).map((id) => data.implants[id]?.name || id),
-            ...(implant.requires.tags || []).map((tag) => `тег: ${tag}`),
-            ...(implant.requires.freeSlots || []).map(
-                (s) => `свободный слот: ${data.slotsById[s]?.name || s}`
-            )
-        ].join("; ")
-        : "";
+    const reqLines = describeRequirements(implant);
+    const requiresText = reqLines.length ? reqLines.join("; ") : "";
 
     const rows = [
         ["Слоты установки", slots],
@@ -1014,18 +1039,10 @@ function renderCatalogCard(implant) {
       </div>
 
       <div class="card-stats">
-        <div class="stat">
-          <span>Нагрузка</span><b>${num(implant.neuralLoad)}</b>
-        </div>
-        <div class="stat">
-          <span>Бонус НЕ</span><b>${bonus > 0 ? "+" + bonus : bonus}</b>
-        </div>
-        <div class="stat">
-          <span>Сервис/мес</span><b>${num(implant.maintenance)} ¢</b>
-        </div>
-        <div class="stat ${riskClass}">
-          <span>Риск</span><b>${escapeHtml(risk || "—")}</b>
-        </div>
+        <div class="stat"><span>Нагрузка</span><b>${num(implant.neuralLoad)}</b></div>
+        <div class="stat"><span>Бонус НЕ</span><b>${bonus > 0 ? "+" + bonus : bonus}</b></div>
+        <div class="stat"><span>Сервис/мес</span><b>${num(implant.maintenance)} ¢</b></div>
+        <div class="stat ${riskClass}"><span>Риск</span><b>${escapeHtml(risk || "—")}</b></div>
       </div>
 
       <div class="card-rows">
@@ -1174,12 +1191,17 @@ function applyPayload(payload) {
     }
 
     if (Array.isArray(payload.installed)) {
-        state.installed = payload.installed.filter(
-            (entry) => data.slotsById[entry.slot] && data.implants[entry.implant]
-        );
+        state.installed = payload.installed
+            .filter((entry) => data.slotsById[entry.slot] && data.implants[entry.implant])
+            .map((entry) => ({
+                slot: entry.slot,
+                implant: entry.implant,
+                locked: Boolean(entry.locked || entry.base)
+            }));
     }
 
     selectedSlot = null;
+    renderAll();
 }
 
 function download(filename, text, mimeType) {
@@ -1291,4 +1313,52 @@ function inlineMarkdown(text) {
         .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
         .replace(/\*(.*?)\*/g, "<em>$1</em>")
         .replace(/`(.*?)`/g, "<code>$1</code>");
+}
+
+const ATTRIBUTE_NAMES = {
+    logic: "Логика",
+    willpower: "Сила воли",
+    budget: "Бюджет"
+};
+
+function describeCondition(attribute, condition, currentValue) {
+    const name = ATTRIBUTE_NAMES[attribute] || attribute;
+
+    if (typeof condition !== "object" || condition === null) {
+        return `${name} = ${condition}`;
+    }
+
+    const parts = [];
+    if ("gte" in condition) parts.push(`не ниже ${condition.gte}`);
+    if ("gt" in condition) parts.push(`больше ${condition.gt}`);
+    if ("lte" in condition) parts.push(`не выше ${condition.lte}`);
+    if ("lt" in condition) parts.push(`меньше ${condition.lt}`);
+    if ("eq" in condition) parts.push(`ровно ${condition.eq}`);
+
+    const current = currentValue !== undefined ? ` (сейчас ${currentValue})` : "";
+    return `${name} ${parts.join(" и ")}${current}`;
+}
+
+function describeRequirements(implant) {
+    const lines = [];
+    const requires = implant.requires;
+    if (!requires) return lines;
+
+    if (requires.ids?.length) {
+        lines.push(`импланты: ${requires.ids.map((id) => data.implants[id]?.name || id).join(", ")}`);
+    }
+    if (requires.tags?.length) {
+        lines.push(`теги: ${requires.tags.join(", ")}`);
+    }
+    if (requires.freeSlots?.length) {
+        lines.push(
+            `свободные слоты: ${requires.freeSlots.map((s) => data.slotsById[s]?.name || s).join(", ")}`
+        );
+    }
+    if (requires.attributes) {
+        Object.entries(requires.attributes).forEach(([attribute, condition]) => {
+            lines.push(describeCondition(attribute, condition, Number(state.character[attribute] || 0)));
+        });
+    }
+    return lines;
 }

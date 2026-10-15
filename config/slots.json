@@ -49,6 +49,13 @@
     "svg": "zone-arm_right"
   },
   {
+    "id": "pelvis",
+    "name": "Таз и бёдра",
+    "group": "torso",
+    "capacity": 2,
+    "svg": "zone-pelvis"
+  },
+  {
     "id": "leg_left",
     "name": "Левая нога",
     "group": "legs",

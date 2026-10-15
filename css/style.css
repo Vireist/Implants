@@ -1096,3 +1096,49 @@ main,
     background: rgba(255, 92, 77, 0.08);
     border-color: rgba(255, 92, 77, 0.5);
 }
+
+/* ========================= BASE IMPLANTS ========================= */
+
+.badge-locked {
+    color: var(--ink);
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.lock-note {
+    white-space: nowrap;
+    color: var(--accent-bright);
+}
+
+/* ========================= DESCRIPTION IN CONSTRUCTOR ========================= */
+
+.implant-desc summary {
+    cursor: pointer;
+    margin-top: 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    list-style: none;
+}
+
+.implant-desc summary::before {
+    content: "▸ ";
+}
+
+.implant-desc[open] summary::before {
+    content: "▾ ";
+}
+
+.implant-desc summary::-webkit-details-marker {
+    display: none;
+}
+
+.implant-desc .description {
+    margin-top: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    background: rgba(0, 0, 0, 0.25);
+    border-left: 2px solid var(--accent-dim);
+}

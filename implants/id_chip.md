@@ -8,6 +8,8 @@ maintenance: 0
 subscription: false
 slots:
   - torso_core
+  - right_arm
+  - left_arm
 extraOccupies: []
 neuralLoad: 0
 capacityBonus: 0
