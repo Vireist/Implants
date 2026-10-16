@@ -57,6 +57,16 @@
       "message": "Корпоративный имплант требует активную подписку. При неуплате возможны ограничения."
     },
     {
+      "id": "mass_subscription_warning",
+      "enabled": true,
+      "type": "validation",
+      "severity": "warning",
+      "when": {
+        "installedAny": { "quality": "mass", "subscription": true }
+      },
+      "message": "Потребительский, корпоративный имплант требует активную подписку. При неуплате возможны ограничения."
+    },
+    {
       "id": "eye_god_info",
       "enabled": true,
       "type": "info",
@@ -82,7 +92,7 @@
       "when": {
         "count": { "tags": ["bioelectric"], "gte": 2 }
       },
-      "effect": { "addLoad": 2 },
+      "effect": { "addLoad": 3 },
       "message": ""
     },
     {

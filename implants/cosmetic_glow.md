@@ -6,9 +6,7 @@ quality: mass
 cost: 15000
 maintenance: 0
 subscription: false
-slots:
-  - arm_left
-  - arm_right
+slots: [arm_left, arm_right, skin]
 extraOccupies: []
 neuralLoad: 0
 capacityBonus: 0

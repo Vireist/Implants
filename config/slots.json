@@ -82,5 +82,12 @@
     "group": "head",
     "capacity": 2,
     "svg": "zone-throat"
+  },
+  {
+    "id": "skin",
+    "name": "Кожа и подкожный слой",
+    "group": "body",
+    "capacity": 4,
+    "svg": "zone-skin"
   }
 ]

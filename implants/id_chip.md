@@ -6,10 +6,7 @@ quality: mass
 cost: 5000
 maintenance: 0
 subscription: false
-slots:
-  - torso_core
-  - right_arm
-  - left_arm
+slots: [torso_core, skin]
 extraOccupies: []
 neuralLoad: 0
 capacityBonus: 0

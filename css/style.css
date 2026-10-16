@@ -1166,3 +1166,31 @@ main,
 .requirements-block.requirements-unmet .requirements-line {
     color: var(--warning);
 }
+
+/* ========================= SKIN SLOT ========================= */
+
+#zone-skin {
+    fill: rgba(232, 121, 107, 0.03);
+    stroke: rgba(232, 121, 107, 0.3);
+    stroke-width: 1;
+    stroke-dasharray: 3 5;
+}
+
+#zone-skin:hover {
+    fill: rgba(232, 121, 107, 0.1);
+    stroke: var(--accent-bright);
+    filter: none;
+}
+
+#zone-skin.occupied {
+    fill: rgba(143, 216, 210, 0.08);
+    stroke: var(--teal-text);
+}
+
+#zone-skin.selected {
+    fill: rgba(232, 121, 107, 0.1);
+    stroke: var(--accent-bright);
+    stroke-width: 2;
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 10px rgba(255, 145, 132, 0.4));
+}

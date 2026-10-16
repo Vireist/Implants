@@ -1394,7 +1394,7 @@ function inlineMarkdown(text) {
 }
 
 const ATTRIBUTE_NAMES = {
-    logic: "Логика",
+    logic: "Смекалка",
     willpower: "Сила воли",
     budget: "Бюджет"
 };
