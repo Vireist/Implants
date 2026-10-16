@@ -16,9 +16,12 @@ energy:
   type: battery
   risk: medium
 tags:
+  - arm
   - prizrak
   - scrap
-  - arm
+conflicts:
+  tags:
+    - prosthetic
 maxInstallations: 2
 ---
 

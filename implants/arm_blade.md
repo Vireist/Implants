@@ -20,6 +20,9 @@ tags:
   - prosthetic
   - blade
   - forbidden
+conflicts:
+  tags:
+    - prosthetic
 maxInstallations: 2
 ---
 

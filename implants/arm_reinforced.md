@@ -19,6 +19,9 @@ tags:
   - arm
   - prosthetic
   - industrial
+conflicts:
+  tags:
+    - prosthetic
 maxInstallations: 2
 ---
 

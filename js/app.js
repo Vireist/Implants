@@ -17,6 +17,8 @@ const data = {
     rules: []
 };
 
+const STORAGE_KEY = "isotope-implant-build-v1";
+
 let selectedSlot = null;
 let characterLoaded = false;
 let characterSource = "";
@@ -32,12 +34,21 @@ async function init() {
     }
 
     if (document.getElementById("body-svg")) {
-        // Конструктор: main скрыт, пока не загружен файл персонажа
         initConstructor();
+
+        // Пробуем восстановить сборку из localStorage
+        const saved = loadSavedState();
+        if (saved) {
+            applyPayload(saved, { silent: true });
+            characterSource = saved.characterSource || "сохранённая сборка";
+            characterLoaded = true;
+            hideGate();
+        }
     } else if (document.getElementById("catalog-list")) {
         initCatalog();
-        renderAll();
     }
+
+    renderAll();
 }
 
 /* ==============================
@@ -298,12 +309,27 @@ function renderCharacterPanel() {
 
     <div class="actions">
       <button class="action" id="replace-character">Загрузить другой файл</button>
+      <button class="action action-danger" id="reset-build">Сбросить сборку</button>
     </div>
 
-    <p class="hint">Характеристики редактируются только в файле персонажа.</p>
+    <p class="hint">
+      Сборка сохраняется автоматически и восстанавливается при перезагрузке страницы.
+      Характеристики редактируются только в файле персонажа.
+    </p>
   `;
 
     byId("replace-character")?.addEventListener("click", showGate);
+    byId("reset-build")?.addEventListener("click", resetBuild);
+}
+
+function resetBuild() {
+    if (!confirm("Сбросить текущую сборку и вернуться к экрану идентификации?")) return;
+    clearSavedState();
+    state.character = { name: "", logic: 0, willpower: 0, budget: 0 };
+    state.installed = [];
+    characterSource = "";
+    characterLoaded = false;
+    showGate();
 }
 
 function renderBody(totals) {
@@ -427,6 +453,17 @@ function renderSlotPanel(totals) {
                 const leftAfter = totals.budgetLeft - num(implant.cost);
                 const reqLines = describeRequirements(implant);
 
+                const REQUIREMENT_PREFIXES = [
+                    "Требуется ",
+                    "Требуются импланты:",
+                    "Нужны установленные импланты с тегами:",
+                    "Нужны свободные слоты:"
+                ];
+
+                const otherReasons = check.reasons.filter(
+                    (reason) => !REQUIREMENT_PREFIXES.some((prefix) => reason.startsWith(prefix))
+                );
+
                 return `
           <div class="implant-option ${check.ok ? "" : "disabled"}">
             <div class="card-head">
@@ -450,7 +487,7 @@ function renderSlotPanel(totals) {
             ${
                     reqLines.length
                         ? `
-              <div class="requirements-block">
+              <div class="requirements-block ${check.ok ? "" : "requirements-unmet"}">
                 <div class="requirements-title">Требования</div>
                 ${reqLines.map((line) => `<div class="requirements-line">${escapeHtml(line)}</div>`).join("")}
               </div>
@@ -459,10 +496,10 @@ function renderSlotPanel(totals) {
                 }
 
             ${
-                    !check.ok
+                    !check.ok && otherReasons.length
                         ? `
               <div class="block-reason">
-                ${check.reasons.map((reason) => `<div>⚠ ${escapeHtml(reason)}</div>`).join("")}
+                ${otherReasons.map((reason) => `<div>⚠ ${escapeHtml(reason)}</div>`).join("")}
               </div>
             `
                         : ""
@@ -605,12 +642,14 @@ function installImplant(slotId, implantId) {
     }
 
     state.installed.push({ slot: slotId, implant: implantId });
+    saveState();
     renderAll();
 }
 
 function removeInstalled(index) {
     if (state.installed[index]?.locked) return;
     state.installed.splice(index, 1);
+    saveState();
     renderAll();
 }
 
@@ -1178,7 +1217,7 @@ function importCode() {
     }
 }
 
-function applyPayload(payload) {
+function applyPayload(payload, options = {}) {
     if (!payload) return;
 
     if (payload.character) {
@@ -1201,7 +1240,10 @@ function applyPayload(payload) {
     }
 
     selectedSlot = null;
-    renderAll();
+
+    if (!options.silent) {
+        saveState();
+    }
 }
 
 function download(filename, text, mimeType) {
@@ -1264,6 +1306,42 @@ function escapeHtml(value = "") {
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+}
+
+function saveState() {
+    try {
+        const payload = {
+            schema: STORAGE_KEY,
+            character: state.character,
+            installed: state.installed,
+            characterSource: characterSource
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (error) {
+        console.warn("Не удалось сохранить сборку:", error);
+    }
+}
+
+function loadSavedState() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || parsed.schema !== STORAGE_KEY) return null;
+        if (!parsed.character || !parsed.character.name) return null;
+        return parsed;
+    } catch (error) {
+        console.warn("Не удалось прочитать сохранённую сборку:", error);
+        return null;
+    }
+}
+
+function clearSavedState() {
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+        // игнорируем
+    }
 }
 
 function mdToHtml(markdown = "") {

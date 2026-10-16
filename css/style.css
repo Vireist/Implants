@@ -1142,3 +1142,27 @@ main,
     background: rgba(0, 0, 0, 0.25);
     border-left: 2px solid var(--accent-dim);
 }
+
+/* ========================= RESET BUILD ========================= */
+
+.action-danger {
+    border-color: rgba(255, 92, 77, 0.6);
+    color: var(--danger);
+    background: rgba(255, 92, 77, 0.08);
+}
+
+.action-danger:hover:not(:disabled) {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: var(--ink);
+}
+
+.requirements-block.requirements-unmet {
+    background: rgba(255, 180, 84, 0.07);
+    border-color: rgba(255, 180, 84, 0.4);
+    border-left-color: var(--warning);
+}
+
+.requirements-block.requirements-unmet .requirements-line {
+    color: var(--warning);
+}
