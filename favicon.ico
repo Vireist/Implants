@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+    <!-- Плашка со срезанными углами, как у панелей сайта -->
+    <path d="M0 0 H50 L64 14 V64 H14 L0 50 Z" fill="#1e1313"/>
+    <path d="M0 0 H50 L64 14 V64 H14 L0 50 Z" fill="none" stroke="#e8796b" stroke-width="2" opacity="0.45"/>
+
+    <!-- Глаз -->
+    <path d="M10 28 Q32 10 54 28 Q32 46 10 28 Z"
+          fill="none" stroke="#e8796b" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="32" cy="28" r="8" fill="#e8796b"/>
+    <circle cx="32" cy="28" r="3" fill="#170e0e"/>
+
+    <!-- Стержень в череп -->
+    <path d="M32 39 V56" stroke="#e8796b" stroke-width="5" stroke-linecap="round"/>
+    <path d="M26 47 H38 M26 53 H38" stroke="#8fd8d2" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
